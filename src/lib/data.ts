@@ -160,7 +160,10 @@ export async function getStatesWithCounts(): Promise<StateInfo[]> {
     .from("businesses")
     .select("state, state_slug, state_abbr");
 
-  if (error) throw error;
+  if (error) {
+    console.error("getStatesWithCounts:", error.message);
+    return [];
+  }
 
   const counts = new Map<string, { name: string; slug: string; abbr: string; count: number }>();
   for (const row of data || []) {
@@ -207,7 +210,10 @@ export async function getCitiesForState(stateSlug: string): Promise<CityInfo[]> 
     .select("city, city_slug, state, state_slug, state_abbr")
     .eq("state_slug", stateSlug);
 
-  if (error) throw error;
+  if (error) {
+    console.error("getCitiesForState:", error.message);
+    return [];
+  }
 
   const counts = new Map<string, CityInfo & { count: number }>();
   for (const row of data || []) {
@@ -249,7 +255,10 @@ export async function getBusinessesForCity(
     .eq("city_slug", citySlug)
     .order("rating", { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    console.error("getBusinessesForCity:", error.message);
+    return [];
+  }
   return data || [];
 }
 
@@ -300,7 +309,10 @@ export async function searchBusinesses(query: string): Promise<Business[]> {
     .order("rating", { ascending: false })
     .limit(50);
 
-  if (error) throw error;
+  if (error) {
+    console.error("searchBusinesses:", error.message);
+    return [];
+  }
   return data || [];
 }
 
@@ -311,6 +323,9 @@ export async function getTotalBusinessCount(): Promise<number> {
     .from("businesses")
     .select("*", { count: "exact", head: true });
 
-  if (error) throw error;
+  if (error) {
+    console.error("getTotalBusinessCount:", error.message);
+    return 0;
+  }
   return count || 0;
 }
